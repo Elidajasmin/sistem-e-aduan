@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem E-Aduan Peralatan IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-backdrop {
+            background-color: rgba(0,0,0,0.6);
+        }
+        .modal {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .toast {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        /* Logo Animation */
+        .logo-animate {
+            animation: pulse 2.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.9;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Main Application Container -->
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-md sticky top-0 z-40">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-laptop-medical text-3xl text-blue-600 logo-animate"></i>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">Sistem E-Aduan IT</h1>
+                        <p class="text-sm text-gray-500">Pejabat Pendidikan Daerah Kinta Utara</p>
+                    </div>
+                </div>
+                <div class="space-x-2">
+                    <button id="check-status-nav-btn" class="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors">Semak Status</button>
+                    <button id="admin-login-nav-btn" class="px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-gray-800 transition-colors">Admin</button>
+                    <button id="admin-logout-btn" class="hidden px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">Log Keluar</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 container mx-auto p-4 md:p-8">
+            <!-- User Complaint Form View -->
+            <div id="user-view">
+                <div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+                    <form id="complaint-form" class="space-y-6">
+                        <div class="text-center">
+                            <h2 class="text-2xl font-bold text-gray-900">Borang Aduan Baru</h2>
+                            <p class="text-gray-600 mt-1">Sila lengkapkan semua maklumat di bawah.</p>
+                        </div>
+                        <!-- User Info -->
+                        <fieldset class="border-t border-gray-200 pt-6">
+                            <legend class="text-lg font-semibold text-gray-900">1. Maklumat Pengadu</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                                <div>
+                                    <label for="complainant-name" class="block text-sm font-medium text-gray-700">Nama Penuh <span class="text-red-500">*</span></label>
+                                    <input type="text" id="complainant-name" name="complainant-name" required class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="cth: Ahmad bin Kassim">
+                                </div>
+                                <div>
+                                    <label for="complainant-dept" class="block text-sm font-medium text-gray-700">Sektor/Unit <span class="text-red-500">*</span></label>
+                                    <select id="complainant-dept" name="complainant-dept" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                        <option value="">-- Sila Pilih Sektor/Unit --</option>
+                                        <option>Sektor Perancangan</option>
+                                        <option>Sektor Pembelajaran</option>
+                                        <option>Sektor Pengurusan Sekolah</option>
+                                        <option>Sektor Pembangunan Murid</option>
+                                        <option>Sektor Psikologi & Kaunseling</option>
+                                        <option>Sektor Pentaksiran & Pemeriksaan</option>
+                                        <option>Sektor Pengurusan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Equipment Info -->
+                        <fieldset class="border-t border-gray-200 pt-6">
+                            <legend class="text-lg font-semibold text-gray-900">2. Maklumat Peralatan</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                                <div>
+                                    <label for="equipment-type" class="block text-sm font-medium text-gray-700">Jenis Peralatan <span class="text-red-500">*</span></label>
+                                    <select id="equipment-type" name="equipment-type" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                        <option>Komputer Riba (Laptop)</option>
+                                        <option>Komputer Meja (Desktop)</option>
+                                        <option>Pencetak (Printer)</option>
+                                        <option>Pengimbas (Scanner)</option>
+                                        <option>Projektor (Projector)</option>
+                                        <option>Rangkaian (Network)</option>
+                                        <option>Lain-lain</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="asset-number" class="block text-sm font-medium text-gray-700">Nombor Aset/Siri</label>
+                                    <input type="text" id="asset-number" name="asset-number" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="cth: DELL-SN-12345">
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Problem Details -->
+                        <fieldset class="border-t border-gray-200 pt-6">
+                            <legend class="text-lg font-semibold text-gray-900">3. Butiran Masalah</legend>
+                            <div class="mt-4 space-y-4">
+                                <div>
+                                    <label for="complaint-title" class="block text-sm font-medium text-gray-700">Tajuk Aduan <span class="text-red-500">*</span></label>
+                                    <input type="text" id="complaint-title" name="complaint-title" required class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="cth: Skrin laptop menjadi biru">
+                                </div>
+                                <div>
+                                    <label for="complaint-description" class="block text-sm font-medium text-gray-700">Huraian Penuh <span class="text-red-500">*</span></label>
+                                    <textarea id="complaint-description" name="complaint-description" rows="4" required class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Terangkan masalah dengan terperinci..."></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end pt-6">
+                            <button type="submit" class="w-full md:w-auto px-8 py-3 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105">Hantar Aduan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Admin Dashboard View -->
+            <div id="admin-dashboard-view" class="hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Papan Pemuka Pentadbir</h2>
+                <div id="complaint-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Complaint cards will be injected here -->
+                </div>
+                <div id="no-complaints" class="hidden text-center py-16">
+                    <i class="fas fa-folder-open text-6xl text-gray-300"></i>
+                    <h3 class="mt-4 text-xl font-semibold text-gray-700">Tiada aduan ditemui.</h3>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div id="admin-login-content" class="bg-white rounded-lg shadow-xl w-11/12 md:max-w-sm transform opacity-0 -translate-y-10">
+            <div class="p-8 space-y-4">
+                <h3 class="text-xl font-bold text-center text-gray-900">Log Masuk Pentadbir</h3>
+                <form id="admin-login-form">
+                    <div>
+                        <label for="admin-password" class="block text-sm font-medium text-gray-700">Kata Laluan</label>
+                        <input type="password" id="admin-password" required class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <p id="admin-login-error" class="text-sm text-red-600 hidden">Kata laluan tidak sah.</p>
+                    <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Log Masuk</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complaint Detail Modal (for Admin) -->
+    <div id="complaint-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div id="modal-content" class="bg-white rounded-lg shadow-xl w-11/12 md:max-w-2xl transform opacity-0 -translate-y-10">
+            <div class="flex items-center justify-between p-5 border-b rounded-t">
+                <h3 class="text-xl font-semibold text-gray-900">Butiran Aduan: <span id="modal-ticket-id" class="text-blue-600"></span></h3>
+                <button type="button" class="close-modal-btn text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"><i class="fas fa-times fa-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+                <!-- Details injected by JS -->
+            </div>
+            <div id="modal-admin-actions" class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+                <label for="status-update" class="text-sm font-medium text-gray-700">Kemas kini Status:</label>
+                <select id="status-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    <option value="Baru">Baru</option>
+                    <option value="Dalam Proses">Dalam Proses</option>
+                    <option value="Selesai">Selesai</option>
+                </select>
+                <button id="update-status-btn" type="button" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Check Modal -->
+    <div id="status-check-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div id="status-check-content" class="bg-white rounded-lg shadow-xl w-11/12 md:max-w-lg transform opacity-0 -translate-y-10">
+            <div class="flex items-center justify-between p-5 border-b">
+                <h3 class="text-xl font-semibold text-gray-900">Semak Status Aduan</h3>
+                <button type="button" class="close-modal-btn text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"><i class="fas fa-times fa-lg"></i></button>
+            </div>
+            <div class="p-6">
+                <form id="status-check-form" class="flex items-center space-x-2">
+                    <input type="text" id="ticket-id-input" placeholder="Masukkan ID Tiket anda (cth: IT-123456789)" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <button type="submit" class="py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Semak</button>
+                </form>
+                <div id="status-check-result" class="mt-6 hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="success-toast" class="fixed top-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg flex items-center space-x-3 transform translate-x-[120%] opacity-0 toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message"></span>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONSTANTS ---
+            const ADMIN_PASSWORD = 'JPNA@Password26';
+
+            // --- DOM ELEMENTS ---
+            const userView = document.getElementById('user-view');
+            const adminDashboardView = document.getElementById('admin-dashboard-view');
+            const complaintForm = document.getElementById('complaint-form');
+            const complaintList = document.getElementById('complaint-list');
+            const noComplaintsDiv = document.getElementById('no-complaints');
+            
+            // Buttons
+            const checkStatusNavBtn = document.getElementById('check-status-nav-btn');
+            const adminLoginNavBtn = document.getElementById('admin-login-nav-btn');
+            const adminLogoutBtn = document.getElementById('admin-logout-btn');
+
+            // Modals
+            const adminLoginModal = document.getElementById('admin-login-modal');
+            const adminLoginContent = document.getElementById('admin-login-content');
+            const adminLoginForm = document.getElementById('admin-login-form');
+            const adminLoginError = document.getElementById('admin-login-error');
+            
+            const complaintModal = document.getElementById('complaint-modal');
+            const modalContent = document.getElementById('modal-content');
+            
+            const statusCheckModal = document.getElementById('status-check-modal');
+            const statusCheckContent = document.getElementById('status-check-content');
+            const statusCheckForm = document.getElementById('status-check-form');
+            const statusCheckResult = document.getElementById('status-check-result');
+
+            const successToast = document.getElementById('success-toast');
+            const toastMessage = document.getElementById('toast-message');
+
+            // --- STATE MANAGEMENT ---
+            let complaints = [];
+            let isAdminLoggedIn = false;
+
+            // --- FUNCTIONS ---
+
+            function init() {
+                // Load data
+                complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                isAdminLoggedIn = JSON.parse(sessionStorage.getItem('isAdminLoggedIn')) || false;
+
+                // Setup UI based on state
+                updateUI();
+
+                // Event Listeners
+                complaintForm.addEventListener('submit', handleNewComplaint);
+                adminLoginNavBtn.addEventListener('click', () => showModal(adminLoginModal, adminLoginContent));
+                adminLoginForm.addEventListener('submit', handleAdminLogin);
+                adminLogoutBtn.addEventListener('click', handleAdminLogout);
+                checkStatusNavBtn.addEventListener('click', () => {
+                    statusCheckResult.classList.add('hidden');
+                    statusCheckForm.reset();
+                    showModal(statusCheckModal, statusCheckContent);
+                });
+                statusCheckForm.addEventListener('submit', handleStatusCheck);
+
+                // Universal modal closer
+                document.querySelectorAll('.modal-backdrop, .close-modal-btn').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        if (e.target === el) {
+                            hideAllModals();
+                        }
+                    });
+                });
+            }
+
+            function updateUI() {
+                if (isAdminLoggedIn) {
+                    userView.classList.add('hidden');
+                    adminDashboardView.classList.remove('hidden');
+                    adminLoginNavBtn.classList.add('hidden');
+                    checkStatusNavBtn.classList.add('hidden');
+                    adminLogoutBtn.classList.remove('hidden');
+                    renderAdminDashboard();
+                } else {
+                    userView.classList.remove('hidden');
+                    adminDashboardView.classList.add('hidden');
+                    adminLoginNavBtn.classList.remove('hidden');
+                    checkStatusNavBtn.classList.remove('hidden');
+                    adminLogoutBtn.classList.add('hidden');
+                }
+            }
+            
+            function handleNewComplaint(e) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                
+                const newComplaint = {
+                    id: `IT-${Date.now()}`,
+                    name: formData.get('complainant-name'),
+                    department: formData.get('complainant-dept'),
+                    equipmentType: formData.get('equipment-type'),
+                    assetNumber: formData.get('asset-number'),
+                    title: formData.get('complaint-title'),
+                    description: formData.get('complaint-description'),
+                    date: new Date().toISOString(),
+                    status: 'Baru'
+                };
+
+                complaints.push(newComplaint);
+                saveComplaints();
+                complaintForm.reset();
+                showToast(`Aduan berjaya dihantar! ID Tiket anda: ${newComplaint.id}`);
+            }
+            
+            function handleAdminLogin(e) {
+                e.preventDefault();
+                const password = document.getElementById('admin-password').value;
+                if (password === ADMIN_PASSWORD) {
+                    isAdminLoggedIn = true;
+                    sessionStorage.setItem('isAdminLoggedIn', 'true');
+                    hideAllModals();
+                    updateUI();
+                    adminLoginError.classList.add('hidden');
+                    adminLoginForm.reset();
+                } else {
+                    adminLoginError.classList.remove('hidden');
+                }
+            }
+
+            function handleAdminLogout() {
+                isAdminLoggedIn = false;
+                sessionStorage.removeItem('isAdminLoggedIn');
+                updateUI();
+            }
+
+            function handleStatusCheck(e) {
+                e.preventDefault();
+                const ticketId = document.getElementById('ticket-id-input').value.trim();
+                const complaint = complaints.find(c => c.id.toLowerCase() === ticketId.toLowerCase());
+                
+                statusCheckResult.classList.remove('hidden');
+                if (complaint) {
+                     const statusColors = {
+                        'Baru': 'bg-blue-100 text-blue-800',
+                        'Dalam Proses': 'bg-yellow-100 text-yellow-800',
+                        'Selesai': 'bg-green-100 text-green-800'
+                    };
+                    statusCheckResult.innerHTML = `
+                        <div class="border rounded-lg p-4 space-y-2">
+                            <p><strong>ID Tiket:</strong> ${complaint.id}</p>
+                            <p><strong>Tajuk:</strong> ${complaint.title}</p>
+                            <p><strong>Tarikh Dihantar:</strong> ${new Date(complaint.date).toLocaleDateString('ms-MY')}</p>
+                            <p class="flex items-center"><strong>Status:</strong> <span class="ml-2 px-3 py-1 text-sm font-medium rounded-full ${statusColors[complaint.status]}">${complaint.status}</span></p>
+                        </div>
+                    `;
+                } else {
+                    statusCheckResult.innerHTML = `<p class="text-red-600">ID Tiket tidak ditemui. Sila pastikan ID adalah betul.</p>`;
+                }
+            }
+
+            function renderAdminDashboard() {
+                complaintList.innerHTML = '';
+                if (complaints.length === 0) {
+                    noComplaintsDiv.classList.remove('hidden');
+                    complaintList.classList.add('hidden');
+                } else {
+                    noComplaintsDiv.classList.add('hidden');
+                    complaintList.classList.remove('hidden');
+                    
+                    const sortedComplaints = [...complaints].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    sortedComplaints.forEach(complaint => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white rounded-lg shadow-md p-5 flex flex-col hover:shadow-xl transition-shadow duration-300 cursor-pointer';
+                        card.dataset.id = complaint.id;
+
+                        const statusColors = {
+                            'Baru': 'bg-blue-100 text-blue-800',
+                            'Dalam Proses': 'bg-yellow-100 text-yellow-800',
+                            'Selesai': 'bg-green-100 text-green-800'
+                        };
+                        
+                        const iconClasses = {
+                            'Komputer Riba (Laptop)': 'fa-laptop',
+                            'Komputer Meja (Desktop)': 'fa-desktop',
+                            'Pencetak (Printer)': 'fa-print',
+                            'Pengimbas (Scanner)': 'fa-scanner',
+                            'Projektor (Projector)': 'fa-video',
+                            'Rangkaian (Network)': 'fa-wifi',
+                            'Lain-lain': 'fa-question-circle'
+                        };
+
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas ${iconClasses[complaint.equipmentType] || 'fa-cog'} text-gray-400 text-xl"></i>
+                                    <span class="text-sm font-medium text-gray-500">${complaint.equipmentType}</span>
+                                </div>
+                                <span class="px-3 py-1 text-xs font-medium rounded-full ${statusColors[complaint.status]}">${complaint.status}</span>
+                            </div>
+                            <h3 class="mt-3 text-lg font-bold text-gray-800 truncate" title="${complaint.title}">${complaint.title}</h3>
+                            <p class="text-sm text-gray-600">ID Tiket: ${complaint.id}</p>
+                            <div class="mt-auto pt-4 flex justify-between items-center text-xs text-gray-500 border-t mt-4">
+                                <span>${new Date(complaint.date).toLocaleDateString('ms-MY')}</span>
+                                <span class="font-semibold">${complaint.name}</span>
+                            </div>
+                        `;
+                        
+                        card.addEventListener('click', () => showComplaintDetailModal(complaint.id));
+                        complaintList.appendChild(card);
+                    });
+                }
+            }
+
+            function showComplaintDetailModal(complaintId) {
+                const complaint = complaints.find(c => c.id === complaintId);
+                if (!complaint) return;
+
+                document.getElementById('modal-ticket-id').textContent = complaint.id;
+                const modalBody = complaintModal.querySelector('.p-6.space-y-6');
+                modalBody.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                        <div><p class="font-semibold text-gray-500">Pengadu:</p><p class="text-gray-800 text-base">${complaint.name}</p></div>
+                        <div><p class="font-semibold text-gray-500">Jabatan:</p><p class="text-gray-800 text-base">${complaint.department || 'N/A'}</p></div>
+                        <div><p class="font-semibold text-gray-500">Tarikh Dihantar:</p><p class="text-gray-800 text-base">${new Date(complaint.date).toLocaleString('ms-MY')}</p></div>
+                        <div><p class="font-semibold text-gray-500">Jenis Peralatan:</p><p class="text-gray-800 text-base">${complaint.equipmentType}</p></div>
+                        <div><p class="font-semibold text-gray-500">Nombor Aset:</p><p class="text-gray-800 text-base">${complaint.assetNumber || 'N/A'}</p></div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <p class="font-semibold text-gray-500 text-sm">Tajuk Aduan:</p>
+                        <h4 class="text-gray-800 text-lg font-semibold mt-1">${complaint.title}</h4>
+                        <p class="font-semibold text-gray-500 text-sm mt-4">Huraian:</p>
+                        <p class="text-gray-700 mt-1 whitespace-pre-wrap">${complaint.description}</p>
+                    </div>
+                `;
+                
+                const statusUpdateSelect = document.getElementById('status-update');
+                statusUpdateSelect.value = complaint.status;
+                
+                const oldBtn = document.getElementById('update-status-btn');
+                const newBtn = oldBtn.cloneNode(true);
+                oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+                
+                newBtn.addEventListener('click', () => {
+                    updateStatus(complaintId, statusUpdateSelect.value);
+                });
+
+                showModal(complaintModal, modalContent);
+            }
+
+            function updateStatus(complaintId, newStatus) {
+                const complaintIndex = complaints.findIndex(c => c.id === complaintId);
+                if (complaintIndex > -1) {
+                    complaints[complaintIndex].status = newStatus;
+                    saveComplaints();
+                    hideAllModals();
+                    renderAdminDashboard();
+                    showToast('Status aduan berjaya dikemas kini!');
+                }
+            }
+
+            function saveComplaints() {
+                localStorage.setItem('complaints', JSON.stringify(complaints));
+            }
+
+            // --- MODAL & TOAST UTILITIES ---
+            function showModal(modal, content) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('opacity-0', '-translate-y-10');
+                    content.classList.add('opacity-100', 'translate-y-0');
+                }, 10);
+            }
+
+            function hideModal(modal, content) {
+                 content.classList.add('opacity-0', '-translate-y-10');
+                 content.classList.remove('opacity-100', 'translate-y-0');
+                 setTimeout(() => {
+                    modal.classList.add('hidden');
+                 }, 300);
+            }
+            
+            function hideAllModals() {
+                hideModal(adminLoginModal, adminLoginContent);
+                hideModal(complaintModal, modalContent);
+                hideModal(statusCheckModal, statusCheckContent);
+            }
+
+            function showToast(message) {
+                toastMessage.textContent = message;
+                successToast.classList.remove('opacity-0', 'translate-x-[120%]');
+                successToast.classList.add('opacity-100', 'translate-x-0');
+                setTimeout(() => {
+                    successToast.classList.remove('opacity-100', 'translate-x-0');
+                    successToast.classList.add('opacity-0', 'translate-x-[120%]');
+                }, 5000);
+            }
+
+            // --- INITIALIZATION ---
+            init();
+        });
+    </script>
+</body>
+</html>
